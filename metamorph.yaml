@@ -1,0 +1,5 @@
+clusters:
+  - name: test-cluster
+    read_only: false
+    bootstrap_servers:
+      - localhost:9092
