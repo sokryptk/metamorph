@@ -1,9 +1,14 @@
 package messages
 
 import (
-	"github.com/sokryptk/metamorph/internal/tui/views"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/sokryptk/metamorph/internal/kafka"
 )
 
-type ActivePanelMsg struct {
-	Active views.ActivePanel
+type InitMsg struct{}
+
+type GetClustersMsg map[string]kafka.Cluster
+
+type SwitchContentMsg struct {
+	Model tea.Model
 }

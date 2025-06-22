@@ -25,26 +25,28 @@ type Layout struct {
 	ActivePanel   ActivePanel
 }
 
-func NewLayout() Layout {
+func NewLayoutWithContent(view tea.Model) Layout {
 	return Layout{
 		Header:      Header{},
-		Content:     NewContent(),
+		Content:     view,
 		Footer:      NewFooter(),
 		ActivePanel: ContentActive,
 	}
 }
 
 func (l Layout) Init() tea.Cmd {
-	return nil
+	return l.Content.Init()
 }
 
 func (l Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		l.width = msg.Width
 		l.height = msg.Height
 
-		l.height = l.height - lipgloss.Height(l.Header.View()) - lipgloss.Height(l.Footer.View())
+		l.height = l.height - lipgloss.Height(l.Header.View()) - lipgloss.Height(l.Footer.View()) - 2
 
 		nm := tea.WindowSizeMsg{Height: l.height, Width: l.width}
 		l.Content, _ = l.Content.Update(nm)
@@ -62,14 +64,16 @@ func (l Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case ContentActive:
 			l.Content, _ = l.Content.Update(msg)
 		case FooterActive:
-			l.Footer, _ = l.Footer.Update(msg)
+			l.Footer, cmd = l.Footer.Update(msg)
 		default:
 			l.Content, _ = l.Content.Update(msg)
 		}
-
+	default:
+		l.Content, _ = l.Content.Update(msg)
+		l.Footer, cmd = l.Footer.Update(msg)
 	}
 
-	return l, nil
+	return l, cmd
 }
 
 func (l Layout) View() string {
@@ -97,7 +101,8 @@ func (l Layout) SwitchContent(model tea.Model) (tea.Model, tea.Cmd) {
 		Width:  l.width,
 	}
 
-	_, cmd := l.Content.Update(msg)
+	var cmd tea.Cmd
+	l.Content, cmd = l.Content.Update(msg)
 
 	cmds = append(cmds, cmd)
 

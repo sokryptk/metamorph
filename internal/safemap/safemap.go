@@ -50,3 +50,13 @@ func (s *SafeMap[K, V]) Len() int {
 	defer s.RUnlock()
 	return len(s.m)
 }
+
+func (s *SafeMap[K, V]) Range(f func(K, V) bool) {
+	s.RLock()
+	for k, v := range s.m {
+		if !f(k, v) {
+			break
+		}
+	}
+	s.RUnlock()
+}

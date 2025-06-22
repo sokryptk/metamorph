@@ -1,7 +1,10 @@
 package views
 
 import (
+	"log"
+
 	"github.com/sokryptk/metamorph/internal/cluster"
+	"github.com/sokryptk/metamorph/internal/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -19,17 +22,35 @@ type MetamorphicView struct {
 func NewMetamorph(manager *cluster.Manager) MetamorphicView {
 	return MetamorphicView{
 		Manager:  manager,
-		Embedded: NewLayout(),
+		Embedded: NewLayoutWithContent(Blank{}),
+	}
+}
+
+func SwitchContentCmd(model tea.Model) tea.Cmd {
+	return func() tea.Msg {
+		return messages.SwitchContentMsg{Model: model}
 	}
 }
 
 func (m MetamorphicView) Init() tea.Cmd {
-	return nil
+	return tea.Batch(
+		SwitchContentCmd(NewCluster(m.Manager)),
+		m.Embedded.Init(),
+	)
 }
 
 func (m MetamorphicView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	m.Embedded, _ = m.Embedded.Update(msg)
-	return m, nil
+	var cmd tea.Cmd
+
+	log.Println("Received message", msg)
+	switch msg := msg.(type) {
+	case messages.SwitchContentMsg:
+		m.Embedded, cmd = m.Embedded.(Layout).SwitchContent(msg.Model)
+	default:
+		m.Embedded, cmd = m.Embedded.Update(msg)
+	}
+
+	return m, cmd
 }
 
 func (m MetamorphicView) View() string {

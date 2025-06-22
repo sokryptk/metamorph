@@ -14,6 +14,10 @@ type Footer struct {
 
 func NewFooter() Footer {
 	ti := textinput.New()
+	ti.Focus()
+	ti.CharLimit = 156
+	ti.Width = 20
+
 	return Footer{
 		input: ti,
 	}
@@ -25,6 +29,14 @@ func (f Footer) Init() tea.Cmd {
 
 func (f Footer) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	f.input, _ = f.input.Update(msg)
+
+	switch msg.(type) {
+	case tea.KeyMsg:
+		value := f.input.Value()
+		if value == ":topics" {
+			return f, SwitchContentCmd(Footer{})
+		}
+	}
 	return f, nil
 }
 
