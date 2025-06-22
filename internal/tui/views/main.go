@@ -1,8 +1,6 @@
 package views
 
 import (
-	"log"
-
 	"github.com/sokryptk/metamorph/internal/cluster"
 	"github.com/sokryptk/metamorph/internal/tui/messages"
 
@@ -42,7 +40,6 @@ func (m MetamorphicView) Init() tea.Cmd {
 func (m MetamorphicView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
-	log.Println("Received message", msg)
 	switch msg := msg.(type) {
 	case messages.SwitchContentMsg:
 		m.Embedded, cmd = m.Embedded.(Layout).SwitchContent(msg.Model)

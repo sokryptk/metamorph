@@ -38,6 +38,7 @@ func NewCluster(manager *cluster.Manager) Cluster {
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240")).
 		BorderBottom(true).
+		AlignHorizontal(lipgloss.Center).
 		Bold(false)
 	s.Selected = s.Selected.
 		Foreground(lipgloss.Color("229")).
@@ -53,10 +54,10 @@ func NewCluster(manager *cluster.Manager) Cluster {
 
 func (c Cluster) SetRowsFromClusters(clusters map[string]kafka.Cluster) {
 	rows := make([]table.Row, 0)
-	for _, cluster := range clusters {
+	for cc, cluster := range clusters {
 		row := table.Row{
-			cluster.Name,
-			strings.Join(cluster.Versions, ", "),
+			cc,
+			strings.Join(cluster.Versions, "\n"),
 			strconv.Itoa(cluster.BrokerCount),
 		}
 
@@ -83,7 +84,7 @@ func (c Cluster) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for i, c2 := range headers {
 			headers[i] = table.Column{
 				Title: c2.Title,
-				Width: msg.Width / len(headers),
+				Width: (msg.Width - 5) / len(headers),
 			}
 		}
 
