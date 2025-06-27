@@ -33,3 +33,12 @@ func (s *State) GetClusterInfo(ctx context.Context) (kafka.Cluster, error) {
 
 	return cluster, nil
 }
+
+func (s *State) GetTopics(ctx context.Context) ([]kafka.Topic, error) {
+	topics, err := kafka.GetTopics(ctx, s.ADM)
+	if err != nil {
+		return nil, err
+	}
+
+	return topics, nil
+}

@@ -13,8 +13,9 @@ import (
 var _ tea.Model = MetamorphicView{}
 
 type MetamorphicView struct {
-	Manager  *cluster.Manager
-	Embedded tea.Model
+	width, height int
+	Manager       *cluster.Manager
+	Embedded      tea.Model
 }
 
 func NewMetamorph(manager *cluster.Manager) MetamorphicView {
@@ -41,6 +42,12 @@ func (m MetamorphicView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		// Just keep a track of the current window size etc
+		m.width = msg.Width
+		m.height = msg.Height
+
+		m.Embedded, cmd = m.Embedded.Update(msg)
 	case messages.SwitchContentMsg:
 		m.Embedded, cmd = m.Embedded.(Layout).SwitchContent(msg.Model)
 	default:

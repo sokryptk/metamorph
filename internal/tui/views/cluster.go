@@ -72,13 +72,19 @@ func (c Cluster) Init() tea.Cmd {
 }
 
 func (c Cluster) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
+	var batch tea.BatchMsg
 
 	switch msg := msg.(type) {
 	case messages.GetClustersMsg:
 		log.Println("Received clusters message")
 		c.SetRowsFromClusters(msg)
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			batch = append(batch, SwitchContentCmd(NewTopic(c.manager)))
+		}
 	case tea.WindowSizeMsg:
+		log.Println("Setting Cluster height to ", msg.Height)
 		c.table.SetHeight(msg.Height)
 		c.table.SetWidth(msg.Width)
 		for i, c2 := range headers {
@@ -91,8 +97,11 @@ func (c Cluster) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		c.table.SetColumns(headers)
 	}
 
+	var cmd tea.Cmd
 	*c.table, cmd = (*c.table).Update(msg)
-	return c, cmd
+	batch = append(batch, cmd)
+
+	return c, tea.Batch(batch...)
 }
 
 func (c Cluster) View() string {

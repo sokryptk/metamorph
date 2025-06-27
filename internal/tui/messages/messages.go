@@ -8,6 +8,7 @@ import (
 type InitMsg struct{}
 
 type GetClustersMsg map[string]kafka.Cluster
+type GetTopicsMsg []kafka.Topic
 
 type SwitchContentMsg struct {
 	Model tea.Model

@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/sokryptk/metamorph/internal/config"
@@ -97,7 +96,16 @@ func (m *Manager) GetClusters() map[string]kafka.Cluster {
 func (m *Manager) GetClustersCmd() func() tea.Msg {
 	return func() tea.Msg {
 		clusters := m.GetClusters()
-		log.Print("Clusters:", messages.GetClustersMsg(clusters))
 		return messages.GetClustersMsg(clusters)
+	}
+}
+
+func (m *Manager) GetTopicsCmd() func() tea.Msg {
+	return func() tea.Msg {
+		topics, err := m.MustGetCurrentClusterState().GetTopics(context.Background())
+		if err != nil {
+			return messages.GetTopicsMsg(nil)
+		}
+		return messages.GetTopicsMsg(topics)
 	}
 }
