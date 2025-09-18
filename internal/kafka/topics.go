@@ -8,8 +8,18 @@ import (
 
 type Topic struct {
 	Name       string
+	IsInternal isinternal
 	Partitions kadm.PartitionDetails
 	ID         string
+}
+
+type isinternal bool
+
+func (i isinternal) String() string {
+	if i {
+		return "true"
+	}
+	return "false"
 }
 
 func GetTopics(ctx context.Context, client *kadm.Client) (results []Topic, err error) {
@@ -22,6 +32,7 @@ func GetTopics(ctx context.Context, client *kadm.Client) (results []Topic, err e
 	for _, t := range topics {
 		ts = append(ts, Topic{
 			Name:       t.Topic,
+			IsInternal: isinternal(t.IsInternal),
 			Partitions: t.Partitions,
 			ID:         t.ID.String(),
 		})

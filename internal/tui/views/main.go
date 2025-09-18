@@ -48,6 +48,13 @@ func (m MetamorphicView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 
 		m.Embedded, cmd = m.Embedded.Update(msg)
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyCtrlC:
+			return m, tea.Quit
+		default:
+			m.Embedded, cmd = m.Embedded.Update(msg)
+		}
 	case messages.SwitchContentMsg:
 		m.Embedded, cmd = m.Embedded.(Layout).SwitchContent(msg.Model)
 	default:

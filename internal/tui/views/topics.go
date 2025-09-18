@@ -14,6 +14,7 @@ import (
 var topicsHeaders = []table.Column{
 	{Title: "ID"},
 	{Title: "Name"},
+	{Title: "Internal"},
 	{Title: "Partition Count"},
 }
 
@@ -56,6 +57,7 @@ func (t Topic) SetRows(topics []kafka.Topic) {
 		row := table.Row{
 			topics.ID,
 			topics.Name,
+			topics.IsInternal.String(),
 			string(topics.Partitions.Numbers()),
 		}
 
