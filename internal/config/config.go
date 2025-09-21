@@ -7,8 +7,13 @@ import (
 )
 
 type Config struct {
+	Kafka KafkaConfig `yaml:"kafka"`
+}
+
+type KafkaConfig struct {
 	Clusters []ClusterConfig `yaml:"clusters"`
 }
+
 type ClusterConfig struct {
 	Name             string            `yaml:"name"`
 	ReadOnly         bool              `yaml:"read_only"`

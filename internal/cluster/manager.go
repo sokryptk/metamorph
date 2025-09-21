@@ -18,10 +18,10 @@ type Manager struct {
 }
 
 func NewManager(ctx context.Context, config *config.Config) (*Manager, error) {
-	states := make(map[string]*State, len(config.Clusters))
+	states := make(map[string]*State, len(config.Kafka.Clusters))
 	manager := &Manager{}
 
-	for _, cc := range config.Clusters {
+	for _, cc := range config.Kafka.Clusters {
 		if manager.ActiveCluster == "" {
 			manager.ActiveCluster = cc.Name
 			manager.ActiveState = &State{
